@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
-__author__ = 'qyh'
-__date__ = '2018/10/16 9:22'
+#__author__ = 'qyh'
+#__date__ = '2018/10/16 9:22'
+
+# xiongyanshi
+# 20190421
 
 import binascii
 import struct
@@ -8,6 +11,7 @@ import base64
 import json
 import os
 from Crypto.Cipher import AES
+import sys
 
 
 def dump(file_path):
@@ -15,6 +19,7 @@ def dump(file_path):
     core_key = binascii.a2b_hex("687A4852416D736F356B496E62617857")
     meta_key = binascii.a2b_hex("2331346C6A6B5F215C5D2630553C2728")
     unpad = lambda s: s[0:-(s[-1] if type(s[-1]) == int else ord(s[-1]))]
+
     f = open(file_path, 'rb')
     header = f.read(8)
     #字符串转十六进制
@@ -62,7 +67,10 @@ def dump(file_path):
     image_size = struct.unpack('<I', bytes(image_size))[0]
     image_data = f.read(image_size)
     file_name = f.name.split("/")[-1].split(".ncm")[0] + '.' + meta_data['format']
-    m = open(os.path.join(os.path.split(file_path)[0], file_name), 'wb')
+
+    outfile = str(os.path.join(os.path.split(file_path)[0], file_name))
+    m = open(outfile, 'wb')
+
     chunk = bytearray()
     while True:
         chunk = bytearray(f.read(0x8000))
@@ -75,11 +83,17 @@ def dump(file_path):
         m.write(chunk)
     m.close()
     f.close()
-    return file_name
 
+    return outfile
+
+def main():
+    count = 0
+    for file in sys.argv[1:]:
+        print('%s To :' % file, end = '\t')
+        outfile = dump(file)
+        print(outfile)
+        count += 1
+    print('%s files processed.' % count)
 
 if __name__ == '__main__':
-    file_list = ['陈芳语 - 爱你.ncm', '李翊君 - 雨蝶.ncm']
-    for file in file_list:
-        filepath = "F:\CloudMusic\\"+file
-        dump(filepath)
+    main()
