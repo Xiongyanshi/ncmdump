@@ -3,7 +3,7 @@
 #__date__ = '2018/10/16 9:22'
 
 # xiongyanshi
-# 20190421
+# 20190421 updated.
 
 import binascii
 import struct
@@ -89,7 +89,7 @@ def dump(file_path):
 def main():
     count = 0
     for file in sys.argv[1:]:
-        print('%s To :' % file, end = '\t')
+        print('%s -> : ' % file, end = '')
         outfile = dump(file)
         print(outfile)
         count += 1
